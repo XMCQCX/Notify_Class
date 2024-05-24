@@ -1,8 +1,8 @@
 /**********************************************
 * @description Notify - This class makes it easier to create and display notification GUIs.
 * @author XMCQCX
-* @date 2024/05/18
-* @version 1.2.0
+* @date 2024/05/24
+* @version 1.2.1
 * @see {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 |AHK Forum}
 * @credits
 * - gwarble for the original v1 Notify function. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ |source}
