@@ -52,6 +52,10 @@ Class Notify {
     *   - `TC` - Top center
     *   - `TR` - Top right
     *   - `CT` - Center
+    * - `ALI`
+    *   - `LEFT`
+    *   - `RIGHT`
+    *   - `CENTER`
     * - `DUR` - The display duration (in seconds) before it disappears. Set it to 0 to keep it on the screen until left-clicking on the GUI. *8
     * - `IW` - Image width `*32`
     * - `IH` - Image height `*32`
@@ -117,7 +121,7 @@ Class Notify {
     {
         Critical      
         
-        static strOptions := 'pos|dur|iw|ih|tf|ts|tc|mf|ms|mc|bc|style|awd|dg|opt'
+        static strOptions := 'pos|ali|dur|iw|ih|tf|ts|tc|mf|ms|mc|bc|style|awd|dg|opt'
         static gLastPosYbr :=0, gLastPosYbc :=0, gLastPosYbL :=0, gLastPosYtL :=10, gLastPosYtc :=10, gLastPosYtr :=10, gLastPosYctr :=''
         static paddingX := 15, paddingY := 10, paddingYb := 75, paddingXpicTxt := 10
         static gIndex := 0
@@ -125,6 +129,7 @@ Class Notify {
 
         ; Default options ============================
         pos := 'br'
+        ali := 'left'
         dur := 8        
         iw := 32
         ih := 32
@@ -205,7 +210,7 @@ Class Notify {
                 g.MarginY := 6            
 
             g.SetFont('s' m['ms'] ' c' m['mc'], m['mf'])
-            g.Add('Text', (!title && IsSet(gPicWidth) ? 'x+' paddingXpicTxt : '') (IsSet(msgWidth) ? ' w' msgWidth : ''), msg)
+            g.Add('Text', m["ali"] (!title && IsSet(gPicWidth) ? ' x+' paddingXpicTxt : '') (IsSet(msgWidth) ? ' w' msgWidth : ''), msg)
         }
 
         g.MarginY := 15
