@@ -114,7 +114,7 @@ Class Notify {
     ;============================================================================================
 
 
-    static showWarning(msg:='' , location := unset , isRoundEdge := 0 ,AWD := 500 ){
+    static showWarning(msg:='' , location := unset ,  isRoundEdge := 0 ,AWD := 500 ){
 
         options:='BC=C72424'    ;STYLE=round AWD=300'
         if IsSet(location){
@@ -127,7 +127,7 @@ Class Notify {
             options .= " STYLE=round"
         else
             options .= " STYLE=edge"
-        MsgBox options
+        
         this._Show(title:='', msg, icon:='iconx', sound:='soundx', callback:='', options )
     }
 
