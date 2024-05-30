@@ -113,6 +113,27 @@ Class Notify {
 
     ;============================================================================================
 
+
+    static showWarning(msg:='' , location := unset , isRoundEdge := 0 ,AWD := 500 ){
+
+        options:='BC=C72424'    ;STYLE=round AWD=300'
+        if IsSet(location){
+            options := "POS=" . location . " " . options
+        }
+
+        options.= " AWD=" AWD
+
+        if isRoundEdge
+            options .= " STYLE=round"
+        else
+            options .= " STYLE=edge"
+        MsgBox options
+        this._Show(title:='', msg, icon:='iconx', sound:='soundx', callback:='', options )
+    }
+
+
+
+
     Static _Show(title:='', msg:='', icon :='', sound:='', callback:='', options:='') 
     {
         Critical      
