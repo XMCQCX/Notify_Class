@@ -114,7 +114,7 @@ Class Notify {
     ;============================================================================================
 
 
-    static showWarning(msg:='' , location := unset ,  isRoundEdge := 0 ,AWD := 500 ){
+    static showError(msg:='' , location := unset ,  isRoundEdge := 0 ,AWD := 500 ){
 
         options:='BC=C72424'    ;STYLE=round AWD=300'
         if IsSet(location){
