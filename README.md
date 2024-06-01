@@ -10,5 +10,4 @@ Notify - This class makes it easier to create and display notification GUIs.
 ## License
   - MIT
 
-![](https://i.imgur.com/QGN5pcP.png)
-![](https://i.imgur.com/VssjzUS.png)
+![](https://i.imgur.com/2jhbwsb.gif)
