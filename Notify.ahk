@@ -2,7 +2,7 @@
 * @description Notify - This class makes it easier to create and display notification GUIs.
 * @author XMCQCX
 * @date 2024/06/12
-* @version 1.4.0
+* @version 1.4.1
 * @see {@link https://github.com/XMCQCX/Notify_Class Notify_Class - GitHub} | {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 Notify_Class - AHK Forum}
 * @credits
 * - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ source}
@@ -46,7 +46,7 @@ F1::Notify.Destroy(mNotifyGUI['hwnd'])
 ;=======================
 *Modify the icon and text upon left-clicking the GUI using a callback.*
 
-mNotifyGUI := Notify.Show('Title value 0', 'Message value 0', A_WinDir '\system32\user32.dll|Icon5',, NotifyGUICallback, 'dur=0 oec=0')
+mNotifyGUI := Notify.Show('Title value 0', 'Message value 0', A_WinDir '\system32\user32.dll|Icon5',, NotifyGUICallback, 'dur=0 dgc=0')
 
 NotifyGUICallback(*)
 {
@@ -141,7 +141,7 @@ NotifyGUICallback(*)
 *   - `RollNorthWest`
 *   - `RollSouthEast`
 *   - `RollSouthWest`
-* - `OEC` - Enable or disable OnEvent click.
+* - `DGC` - Destroy GUI click. Allow or prevent the GUI from being destroyed when clicked.
 *   - `0` - Clicking on the GUI does not destroy it.   
 *   - `1` - Clicking on the GUI destroys it.*
 * - `DG` - Destroy GUIs before creating the new GUI.
@@ -181,7 +181,7 @@ NotifyGUICallback(*)
         this.mDefault['style'] := 'round'      ; Style
         this.mDefault['dg'] := 0               ; Destroy GUIs
         this.mDefault['dga'] := 0              ; Enable or disable HIDE animation.
-        this.mDefault['oec'] := 1              ; OnEvent click
+        this.mDefault['dgc'] := 1              ; OnEvent click
         this.mDefault['bdr'] := 1              ; Border    
         this.mDefault['wstc'] := ''            ; WinSetTransColor 
         this.mDefault['wstp'] := ''            ; WinSetTransparent    
@@ -251,7 +251,7 @@ NotifyGUICallback(*)
             case (m.has('ih') && !m.has('iw')) : m['iw'] := m['ih']
         }
 
-        for value in ['pos', 'mon', 'dur', 'iw', 'ih', 'tf', 'tfo', 'ts', 'tc', 'tali', 'mf', 'mfo', 'ms', 'mc', 'mali', 'bc', 'style', 'dg', 'oec', 'bdr', 'opt', 'wstc', 'wstp', 'dga']
+        for value in ['pos', 'mon', 'dur', 'iw', 'ih', 'tf', 'tfo', 'ts', 'tc', 'tali', 'mf', 'mfo', 'ms', 'mc', 'mali', 'bc', 'style', 'dg', 'dgc', 'bdr', 'opt', 'wstc', 'wstp', 'dga']
             if !m.has(value)
                 m[value] := this.mDefault[value]
 
@@ -411,7 +411,7 @@ NotifyGUICallback(*)
         if callback
             clickArea.OnEvent('Click', callback)
         
-        if (m['oec'])
+        if (m['dgc'])
             clickArea.OnEvent('Click', this.gDestroy.Bind(this, g, 'clickArea'))
 
         g.OnEvent('Close', this.gDestroy.Bind(this, g, 'close'))
