@@ -44,23 +44,6 @@ mNotifyGUI := Notify.Show('The quick brown fox jumps over the lazy dog.',,,,, 'd
 F1::Notify.Destroy(mNotifyGUI['hwnd'])
 
 ;=======================
-*On-Screen Caps Lock Indicator.*
-
-SetCapsLockState('Off')
-
-~*CapsLock:: 
-{
-	static gHwnd := 0
-	Sleep(175)
-
-	If (GetKeyState('CapsLock', 'T')) {
-		If !WinExist('ahk_id ' gHwnd)
-			gHwnd := Notify.Show('CAPS LOCK ON',,,,, 'dur=0 tc=red ts=18 tfo=italic bc=White oec=0')['hwnd']
-	} else
-        Notify.Destroy(gHwnd)
-}
-
-;=======================
 *Modify the icon and text upon left-clicking the GUI using a callback.*
 
 mNotifyGUI := Notify.Show('Title value 0', 'Message value 0', A_WinDir '\system32\user32.dll|Icon5',, NotifyGUICallback, 'dur=0 oec=0')
