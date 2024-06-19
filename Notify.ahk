@@ -430,21 +430,21 @@ NotifyGUICallback(*)
             case 'tr', 'tc', 'tl', 'ct': minMaxPosY := monWATop  
         }
 
-		dhwPrev := A_DetectHiddenWindows
-		tmmPrev := A_TitleMatchMode
-		DetectHiddenWindows(0)
-		SetTitleMatchMode('RegEx')   
+	dhwPrev := A_DetectHiddenWindows
+	tmmPrev := A_TitleMatchMode
+	DetectHiddenWindows(0)
+	SetTitleMatchMode('RegEx')   
 
-		for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] ' ahk_class AutoHotkeyGUI') {            
-			WinGetPos(&guiX, &guiY, &guiW, &guiH, 'ahk_id ' id)
-			switch m['pos'], 'off' {
-				case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)               
-				case 'tr', 'tc', 'tl', 'ct': minMaxPosY := Max(minMaxPosY, guiY + guiH)
-			}
+	for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] ' ahk_class AutoHotkeyGUI') {            
+		WinGetPos(&guiX, &guiY, &guiW, &guiH, 'ahk_id ' id)
+		switch m['pos'], 'off' {
+			case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)               
+			case 'tr', 'tc', 'tl', 'ct': minMaxPosY := Max(minMaxPosY, guiY + guiH)
 		}
+	}
 
-		DetectHiddenWindows(dhwPrev)
-		SetTitleMatchMode(tmmPrev)
+	DetectHiddenWindows(dhwPrev)
+	SetTitleMatchMode(tmmPrev)
 
         switch m['pos'], 'off' {
             case 'br':
