@@ -1,8 +1,8 @@
-/**********************************************
+/********************************************************************************************
 @description Notify - This class makes it easier to create and display notification GUIs.
 @author XMCQCX
-@date 2024/06/24
-@version 1.5.0
+@date 2024/07/05
+@version 1.6.0
 @see {@link https://github.com/XMCQCX/Notify_Class Notify_Class - GitHub} | {@link https://www.autohotkey.com/boards/viewtopic.php?f=83&t=129635 Notify_Class - AHK Forum}
 @credits
 - Notify by gwarble. {@link https://www.autohotkey.com/board/topic/44870-notify-multiple-easy-tray-area-notifications-v04991/ source}
@@ -42,7 +42,7 @@ mNotifyGUI := Notify.Show('The quick brown fox jumps over the lazy dog.',,,,, 'd
 
 ; With the TAG option. It destroys every GUI containing this tag across all scripts.
 
-Notify.Show('The quick brown fox jumps over the lazy dog.',,,,, 'dur=0 pos=ct tag=myTAG')
+Notify.Show('Notify Title',,,,, 'dur=0 pos=ct tag=myTAG')
 ^F2::Notify.Destroy('myTAG')
 
 ; ===== Modify the icon and text upon left-clicking the GUI using a callback. =====
@@ -64,10 +64,10 @@ NotifyGUICallback(*)
 
 ; ===== Progress Bar Example. =====
 
-mNotifyGUI_Prog := Notify.Show('Progress Bar Example',,,,, 'dur=0 prog=cgreen dgc=0')
- 
-for index, value in (arr := [1,2,3,4,5]) {
-    mNotifyGUI_Prog['prog'].Value := index / arr.Length * 100
+mNotifyGUI_Prog := Notify.Show('Progress Bar Example',,,,, 'dur=0 prog=w325 dgc=0')
+
+Loop 5 {
+    mNotifyGUI_Prog['prog'].Value := A_Index * 20
     Sleep(1000)
 }
 
@@ -84,9 +84,9 @@ Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 	Notify.Destroy(thisHotkey)
 
 	if (GetKeyState(thisHotkey, 'T'))
-		Notify.Show(thisHotkey ' ON',,,,, 'pos=bl dur=3 ts=20 tfo=italic bc=00A22B dgc=0 tag=' thisHotkey)
+		Notify.Show(thisHotkey ' ON',,,,, 'pos=bl dur=3 ts=20 tfo=italic bc=00A22B style=edge show=0 dgc=0 tag=' thisHotkey)
 	else
-		Notify.Show(thisHotkey ' OFF',,,,, 'pos=bl dur=3 ts=20 tfo=italic bc=F09800 dgc=0 tag=' thisHotkey)   
+		Notify.Show(thisHotkey ' OFF',,,,, 'pos=bl dur=3 ts=20 tfo=italic bc=F09800 style=edge show=0 dgc=0 tag=' thisHotkey) 		
 }
 
 ~*CapsLock:: 
@@ -96,25 +96,25 @@ Notify.Destroy(mNotifyGUI_Prog['hwnd'])
 	Notify.Destroy(thisHotkey)
 
 	if (GetKeyState(thisHotkey, 'T'))
-		Notify.Show(thisHotkey ' ON',,,,, 'pos=bl dur=0 ts=20 tfo=italic tc=red bc=white dgc=0 tag=' thisHotkey)   
+		Notify.Show(thisHotkey ' ON',,,,, 'pos=bl dur=0 ts=20 tfo=italic tc=red bc=white dgc=0 tag=' thisHotkey)  
 }
 
-***********************************************/
+********************************************************************************************/
 Class Notify {
 
-/**********************************************
+/********************************************************************************************
 @method Show(title, msg, icon, sound, callback, options)
 @description Builds and shows a notification GUI.    
 @param title Title
 @param msg Message
 @param icon {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Picture Picture GuiControls}
 - The path of an icon/picture. See the link above for supported file types.
-- String: 'icon!', 'icon?', 'iconx', 'iconi'
-- Icon from dll: A_WinDir '\system32\user32.dll|Icon4'
+- String: `'icon!'`, `'icon?'`, `'iconx'`, `'iconi'`
+- Icon from dll: `A_WinDir '\system32\user32.dll|Icon4'`
 @param sound {@link https://www.autohotkey.com/docs/v2/lib/SoundPlay.htm SoundPlay function}
 - The path of the WAV file to be played.
-- String: 'soundx', 'soundi'
-- Filename of WAV file located in "C:\Windows\Media" and "Music\Sounds". For example: `Ding`, `tada`, `Windows Error` etc.
+- String: `'soundx'`, `'soundi'`
+- Filename of WAV file located in "C:\Windows\Media" and "Music\Sounds". For example: `'Ding'`, `'tada'`, `'Windows Error'` etc.
 - Call `Notify.SoundsList()` to list and hear all the available sounds.
 @param callback Function object to call when left-clicking on the GUI. {@link https://www.autohotkey.com/docs/v2/misc/Functor.htm Function Objects}
 @param options For example: `'POS=TL DUR=6 IW=70 TF=Impact TS=42 TC=GREEN MC=blue BC=Silver STYLE=edge SHOW=Fade Hide=Fade@250'`
@@ -148,7 +148,7 @@ Class Notify {
   - `LEFT`* 
   - `RIGHT`
   - `CENTER`
-- `PROG` - Progress bar. For example: `prog=1` or `prog=w200 h80 cGreen` {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
+- `PROG` - Progress bar. For example: `prog=w325`, `prog=w200 h80 cGreen` {@link https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#Progress Progress Options}
 - `BC` - Background color `*1F1F1F`
 - `STYLE` - Notification style
   - `ROUND` - Rounded corners*
@@ -162,7 +162,7 @@ Class Notify {
 - `PADX` - The space between the left or right edge of the GUI and the edge of the screen. Can range from 0 to 25.
 - `PADY` - The space between the top or bottom edge of the first GUI created at a position and the edge of the screen. Can range from 0 to 25.
 - `SHOW` and `HIDE` - Animation when showing and hiding the GUI. The duration, which is optional, can range from 1 to 2500 milliseconds. For example: `STYLE=EDGE SHOW=SLIDEWEST HIDE=SLIDEEAST@250`
-- THE ROUND STYLE IS NOT COMPATIBLE WITH MOST ANIMATIONS! The round style renders only the fade-in (SHOW=Fade) animation correctly. The corners become edged during the fade-out if (HIDE=Fade) is used.
+- THE ROUND STYLE IS NOT COMPATIBLE WITH MOST ANIMATIONS! The round style renders only the fade-in (SHOW=Fade@225) animation correctly. The corners become edged during the fade-out if (HIDE=Fade@225) is used.
   - `0` - No animation.
   - `Fade`
   - `Expand`
@@ -191,12 +191,11 @@ Class Notify {
   - `2` - Destroy all GUIs on all monitors at the position option.
   - `3` - Destroy all GUIs on the monitor option.
   - `4` - Destroy all GUIs.
+  - `5` - Destroy all GUIs containing the tag. For example: `tag=myTAG dg=5`
 - `OPT` - Sets various options and styles for the appearance and behavior of the window. `*+Owner -Caption +AlwaysOnTop` {@link https://www.autohotkey.com/docs/v2/lib/Gui.htm#Opt GUI Opt}    
 @returns Map object
-**********************************************/
+********************************************************************************************/
     static Show(title:='', msg:='', icon:='', sound:='', callback:='', options:='') => this._Show(title, msg, icon, sound, callback, options)
-
-    ;============================================================================================
     
     static __New()
     {
@@ -226,7 +225,8 @@ Class Notify {
         this.mDefault['wstc'] := ''            ; WinSetTransColor 
         this.mDefault['wstp'] := ''            ; WinSetTransparent    
         this.mDefault['mon'] := MonitorGetPrimary() ; Monitor number to display the GUI.
-        this.mDefault['opt'] := '+Owner -Caption +AlwaysOnTop' ; GUI options
+        this.mDefault['opt'] := '+Owner -Caption +AlwaysOnTop' ; GUI options        
+        this.padH := 10 ; Space between GUIs
 
         this.mAW := Map(), this.mAW.CaseSense := 'off'  
         this.mAW['0']              := 0         ; No animation
@@ -267,14 +267,14 @@ Class Notify {
         this.aSounds := Array()
 
         for soundName in this.mSounds
-            this.aSounds.Push(soundName)                          
+            this.aSounds.Push(soundName)       
     }
 
     ;============================================================================================
 
     static _Show(title:='', msg:='', icon:='', sound:='', callback:='', options:='') 
     {           
-        static gIndex := 0, paddingY := 10, paddingXpicTxt := 10
+        static gIndex := 0, padXpicTxt := 10
 
         if !title && !msg && !icon
             return   
@@ -284,14 +284,14 @@ Class Notify {
         while RegExMatch(Trim(options), 'i)(\w+)=(.*?(?=\s+\w+=|$))', &match, IsSet(match) ? match.Pos + match.Len : 1)
             m[Trim(match[1])] := Trim(match[2])            
 
-        Switch {
+        switch {
             case (m.has('iw') && !m.has('ih')) : m['ih'] := -1
             case (m.has('ih') && !m.has('iw')) : m['iw'] := -1
         }
 
-        for value in ['pos', 'mon', 'dur', 'iw', 'ih', 'tf', 'tfo', 'ts', 'tc', 'tali', 'mf', 'mfo', 'ms', 'mc', 'mali', 'prog', 'bc', 'style', 'bdr', 'opt', 'wstc', 'wstp', 'dg', 'dgc', 'tag']
-            if !m.has(value)
-                m[value] := this.mDefault[value]
+        for key, value in this.mDefault
+            if !m.has(key)
+                m[key] := value
 
         for value in ['show', 'hide'] {          
             if (m.has(value)) {
@@ -316,7 +316,7 @@ Class Notify {
             case 'edge':
             {
                 if !m.has('showHex') {
-                    Switch m['pos'], 'off' {
+                    switch m['pos'], 'off' {
                         case 'br', 'tr': m['showHex'] := this.mAW['slideWest']
                         case 'bl', 'tl': m['showHex'] := this.mAW['slideEast']
                         case 'bc': m['showHex'] := this.mAW['slideNorth']
@@ -326,7 +326,7 @@ Class Notify {
                 }
 
                 if !m.has('hideHex') {
-                    Switch m['pos'], 'off' {
+                    switch m['pos'], 'off' {
                         case 'br', 'tr': m['hideHex'] := this.mAW['slideEast']
                         case 'bl', 'tl': m['hideHex'] := this.mAW['slideWest']
                         case 'bc': m['hideHex'] := this.mAW['slideSouth']
@@ -334,7 +334,7 @@ Class Notify {
                         case 'ct': m['hideHex'] := this.mAW['expand']
                     }
                 }
-                                  
+              
                 (!m.has('showDur')) ? m['showDur'] := 75 : '' 
                 (!m.has('hideDur')) ? m['hideDur'] := 100 : '' 
                 (!m.has('padX')) || !(m['padX'] >= 0 && m['padX'] <= 25) ? m['padX'] := 0 : ''  
@@ -359,11 +359,12 @@ Class Notify {
             case 2: this.DestroyAllOnAllMonitorAtPosition(m['pos'])
             case 3: this.DestroyAllOnMonitor(m['mon'])
             case 4: this.DestroyAll()
+            case 5: m['tag'] ? this.Destroy(m['tag']) : ''
         }
 
         ;==============================================
        
-        g := Gui(m['opt'], 'NotifyGUI_' m['mon'] '_' m['pos'] (m['tag'] ? '_' m['tag'] : ''))
+        g := Gui(m['opt'], 'NotifyGUI_' m['mon'] '_' m['pos'] '_' m['padY'] (m['tag'] ? '_' m['tag'] : ''))
         g.BackColor := m['bc']
         g.MarginX := 15
         g.MarginY := 15
@@ -392,9 +393,9 @@ Class Notify {
         monWAwidth := Abs(monWARight - monWALeft)
         monWAheight := Abs(monWABottom - monWATop)
         visibleScreenWidth := monWAwidth / (A_ScreenDPI / 94) - m['padX']*2
-        
+       
         if m.Has('pic')
-            picWidth := this.ControlGetPicWidth(m['pic'], monWALeft, monWATop) + paddingXpicTxt + g.MarginX*2   
+            picWidth := this.ControlGetPicWidth(m['pic'], monWALeft, monWATop) + padXpicTxt + g.MarginX*2   
      
         if title
             titleCtrlW := this.ControlGetTextWidth(title, m['tf'], m['ts'], monWALeft, monWATop)
@@ -426,24 +427,24 @@ Class Notify {
         
         if (title) {
             g.SetFont('s' m['ts'] ' c' m['tc'] ' ' m['tfo'], m['tf'])
-            m['title'] := g.Add('Text', m['tali'] (IsSet(picWidth) ? ' x+' paddingXpicTxt : '') (IsSet(titleWidth) ? ' w' titleWidth : ''), title)                                     
+            m['title'] := g.Add('Text', m['tali'] (IsSet(picWidth) ? ' x+' padXpicTxt : '') (IsSet(titleWidth) ? ' w' titleWidth : ''), title)                                     
             m['tfo'] ? g.SetFont() : ''     
         }
 
         if (m['prog']) {
             m['prog'] = 1 ? m['prog'] := '' : ''                 
-            m['prog'] := g.Add('Progress', (!title && IsSet(picWidth) ? ' x+' paddingXpicTxt : '') ' ' m['prog'] (!IsSet(progWidth) || (IsSet(progUserW) && (progUserW < progWidth)) ? '':  ' w' progWidth))
+            m['prog'] := g.Add('Progress', (!title && IsSet(picWidth) ? ' x+' padXpicTxt : '') ' ' m['prog'] (!IsSet(progWidth) || (IsSet(progUserW) && (progUserW < progWidth)) ? '':  ' w' progWidth))
         }
 
         if (msg) {
             title ? g.MarginY := 6 : ''               
             g.SetFont('s' m['ms'] ' c' m['mc'] ' ' m['mfo'], m['mf'])
-            m['msg'] := g.Add('Text', m['mali'] ((!title && !m['prog']) && IsSet(picWidth) ? ' x+' paddingXpicTxt : '') (IsSet(msgWidth) ? ' w' msgWidth : ''), msg)
+            m['msg'] := g.Add('Text', m['mali'] ((!title && !m['prog']) && IsSet(picWidth) ? ' x+' padXpicTxt : '') (IsSet(msgWidth) ? ' w' msgWidth : ''), msg)
         }
 
         g.MarginY := 15
         g.Show('Hide')
-        WinGetPos(&gX, &gY, &gW, &gH, g)
+        WinGetPos(,, &gW, &gH, g)
         clickArea := g.Add('Text', 'x0 y0 w' gW ' h' gH ' BackgroundTrans')
 
         if callback
@@ -454,9 +455,6 @@ Class Notify {
 
         g.OnEvent('Close', this.gDestroy.Bind(this, g, 'close'))
         g.boundFuncTimer := this.gDestroy.Bind(this, g, 'timer')
-
-        if m['dur']
-            SetTimer(g.boundFuncTimer, -(m['dur']*1000 + m['showDur']))
         
         if sound
             this.Sound(sound)
@@ -471,7 +469,7 @@ Class Notify {
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')  
 
         for id in WinGetList('i)^NotifyGUI_' m['mon'] '_' m['pos'] ' ahk_class AutoHotkeyGUI') {            
-            WinGetPos(&guiX, &guiY, &guiW, &guiH, 'ahk_id ' id)
+            WinGetPos(, &guiY,, &guiH, 'ahk_id ' id)
             switch m['pos'], 'off' {
                 case 'br', 'bc', 'bl': minMaxPosY := Min(minMaxPosY, guiY)               
                 case 'tr', 'tc', 'tl', 'ct': minMaxPosY := Max(minMaxPosY, guiY + guiH)
@@ -483,60 +481,68 @@ Class Notify {
         switch m['pos'], 'off' {
             case 'br':
             {           
-                if minMaxPosY = monWABottom || minMaxPosY <= (monWATop + gH + paddingY)
+                if minMaxPosY = monWABottom
                     gPos := 'x' monWARight - gW - m['padX'] ' y' monWABottom - gH - m['padY']
                 else 
-                    gPos := 'x' monWARight - gW - m['padX'] ' y' minMaxPosY - gH - paddingY
+                    gPos := 'x' monWARight - gW - m['padX'] ' y' minMaxPosY - gH - this.padH                                 
             }
             case 'bc':
             {
-                if minMaxPosY = monWABottom || minMaxPosY <= (monWATop + gH + paddingY)
+                if minMaxPosY = monWABottom
                     gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y'  monWABottom - gH - m['padY']         
                 else
-                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY - gH - paddingY
+                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY - gH - this.padH
             }
             case 'bl': 
             {
-                if minMaxPosY = monWABottom || minMaxPosY <= (monWATop + gH + paddingY)
+                if minMaxPosY = monWABottom
                     gPos := 'x' monWALeft + m['padX'] ' y' monWABottom - gH - m['padY']
                 else 
-                    gPos := 'x' monWALeft + m['padX'] ' y' minMaxPosY - gH - paddingY  
+                    gPos := 'x' monWALeft + m['padX'] ' y' minMaxPosY - gH - this.padH                 
             }          
             case 'tl': 
             {
-                if minMaxPosY = monWATop || minMaxPosY >= (monWABottom - gH - paddingY)
+                if minMaxPosY = monWATop
                     gPos := 'x' monWALeft + m['padX'] ' y' monWATop + m['padY']
                 else
-                    gPos := 'x' monWALeft + m['padX'] ' y' minMaxPosY + paddingY  
+                    gPos := 'x' monWALeft + m['padX'] ' y' minMaxPosY + this.padH 
             }              
             case 'tc': 
             {
-                if minMaxPosY = monWATop || minMaxPosY >= (monWABottom - gH - paddingY)
+                if minMaxPosY = monWATop
                     gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' monWATop + m['padY']
                 else
-                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY + paddingY   
+                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY + this.padH 
             }          
             case 'tr': 
             {
-                if minMaxPosY = monWATop || minMaxPosY >= (monWABottom - gH - paddingY)
+                if minMaxPosY = monWATop
                     gPos := 'x' monWARight - m['padX'] - gW ' y' monWATop + m['padY']
                 else
-                    gPos := 'x' monWARight - m['padX'] - gW ' y' minMaxPosY + paddingY 
-            }              
+                    gPos := 'x' monWARight - m['padX'] - gW ' y' minMaxPosY + this.padH
+            }     
             case 'ct':
             {
-                if minMaxPosY = monWATop || minMaxPosY >= (monWABottom - gH - paddingY)
+                if minMaxPosY = monWATop
                     gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' monWATop + (monWAheight/2 - gH/2)
                 else
-                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY + paddingY
+                    gPos := 'x' (monWARight - monWAwidth/2 - gW/2) ' y' minMaxPosY + this.padH
             }
         }
 
-        ;==============================================            
+        switch g.pos, 'off' {    
+            case 'br', 'bc', 'bl': (minMaxPosY < (monWATop + gH + this.padH)) ? outOfWorkArea := true : ''       
+            case 'tr', 'tc', 'tl', 'ct': (minMaxPosY > (monWABottom - gH - this.padH)) ? outOfWorkArea := true : ''           
+        }
 
+        if m['dur']
+            SetTimer(g.boundFuncTimer, -((m['dur'] + (IsSet(outOfWorkArea) ? 8 : 0)) * 1000 + m['showDur']))
+
+        ;==============================================    
+        
         this.mNotifyGUIs[gIndex] := g
         
-        Switch m['style'], 'off' {
+        switch m['style'], 'off' {
             case 'round': this.FrameShadow(g.hwnd)
             case 'edge': m['bdr'] ? g.Opt('+Border'): ''
         }
@@ -560,14 +566,62 @@ Class Notify {
     static gDestroy(g, fromMethod:='', *)
     {
         SetTimer(g.boundFuncTimer, 0)
-            
+
         if g.hideHex && !RegExMatch(fromMethod, '^(Destroy|close)')
             DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', g.hideDur, 'Int', Format("{:#X}", g.hideHex + 0x10000))
-              
+     
         g.Destroy()
 
         if this.mNotifyGUIs.Has(g.gIndex)
             this.mNotifyGUIs.Delete(g.gIndex) 
+
+        ;==============================================
+        
+        Sleep(10)        
+        aGUIs := Array()
+        mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
+
+        for id in WinGetList('i)^NotifyGUI_' g.mon '_' g.pos ' ahk_class AutoHotkeyGUI') {            
+            try {
+                WinGetPos(, &gY,, &gH, 'ahk_id ' id)
+                RegExMatch(WinGetTitle('ahk_id ' id), 'i)^NotifyGUI_\d+_[a-z]+_(\d+)', &match)           
+                aGUIs.Push(Map('gY', gY, 'gH', gH, 'id', id, 'padY', match[1]))
+            } catch {
+                aGUIs := Array()
+                break
+            }
+        }
+        
+        this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])
+        
+        if (aGUIs.Length) {
+            MonitorGetWorkArea(g.mon,, &monWATop,, &monWABottom)
+            monWAheight := Abs(monWABottom - monWATop)
+            SetWinDelay(0)
+            
+            switch g.pos, 'off' {
+                case 'br', 'bc', 'bl': aGUIs := this.SortArrayGUIPosY(aGUIs, true),  posY := monWABottom - aGUIs[1]['padY']               
+                case 'tr', 'tc', 'tl', 'ct': aGUIs := this.SortArrayGUIPosY(aGUIs),  posY := monWATop + aGUIs[1]['padY']
+            }           
+            
+            for _, value in aGUIs {
+                switch g.pos, 'off'{
+                    case 'br', 'bc', 'bl': posY -= value['gH']        
+                    case 'ct': (A_Index = 1 ? posY := monWATop + monWAheight/2 - value['gH']/2 : '') 
+                }                    
+                
+                if (Abs(posY - value['gY']) > 10) {
+                    try WinMove(, posY,,, 'ahk_id ' value['id'])
+                    catch
+                        break
+                }
+
+                switch g.pos, 'off' {    
+                    case 'br', 'bc', 'bl': posY -= this.padH        
+                    case 'tr', 'tc', 'tl', 'ct': posY += value['gH'] + this.padH 
+                } 
+            }
+        }
     }
 
     ;============================================================================================
@@ -575,8 +629,8 @@ Class Notify {
     static Exist(tag)
     {
         mDhwTmm := this.Set_DHWindows_TMMode(0, 'RegEx')
-        
-        for id in WinGetList('i)^NotifyGUI_.*\Q' tag '\E$ ahk_class AutoHotkeyGUI') {
+
+        for id in WinGetList('i)^NotifyGUI_\d+_[a-z]+_\d+_\Q' tag '\E$ ahk_class AutoHotkeyGUI') {
             idFound := id
             break
         }
@@ -593,39 +647,34 @@ Class Notify {
 
     static Destroy(str)
     {
-        mDhwTmm := this.Set_DHWindows_TMMode(0, A_TitleMatchMode), SetWinDelay(1)
+        mDhwTmm := this.Set_DHWindows_TMMode(0, A_TitleMatchMode)        
+        SetWinDelay(25)
      
-        Switch {
-            case WinExist('ahk_id ' str): 
-            {
-                for gIndex, value in this.mNotifyGUIs.Clone() {
-                    if (str = value.handle && this.mNotifyGUIs.Has(gIndex)) {
-                        this.gDestroy(this.mNotifyGUIs[gIndex], 'Destroy')   
-                        break  
-                    }
-                }                    
+        if (WinExist('ahk_id ' str)) {
+            for gIndex, value in this.mNotifyGUIs.Clone() {
+                if (str = value.handle && this.mNotifyGUIs.Has(gIndex)) {
+                    this.gDestroy(this.mNotifyGUIs[gIndex], 'Destroy')   
+                    break  
+                }
+            }                    
 
-                SetTitleMatchMode(1)     
-                for id in WinGetList('NotifyGUI_ ahk_class AutoHotkeyGUI') { 
-                    if (str = id) { 
-                        try WinClose('ahk_id ' id)
-                        break
-                    }
-                }              
-            }           
-            
-            default:
-            {
-                for gIndex, value in this.mNotifyGUIs.Clone()
-                    if str = value.tag && this.mNotifyGUIs.Has(gIndex)
-                        this.gDestroy(this.mNotifyGUIs[gIndex], 'Destroy')    
+            SetTitleMatchMode(1)     
+            for id in WinGetList('NotifyGUI_ ahk_class AutoHotkeyGUI') {
+                if (str = id) { 
+                    try WinClose('ahk_id ' id)
+                    break
+                }
+            }              
+        }         
+        
+        for gIndex, value in this.mNotifyGUIs.Clone()
+            if str = value.tag && this.mNotifyGUIs.Has(gIndex)
+                this.gDestroy(this.mNotifyGUIs[gIndex], 'Destroy')   
 
-                SetTitleMatchMode('RegEx')                                   
-                for id in WinGetList('i)^NotifyGUI_.*\Q' str '\E$ ahk_class AutoHotkeyGUI')
-                    try WinClose('ahk_id ' id)                              
-            }
-        }
-
+        SetTitleMatchMode('RegEx')                                   
+        for id in WinGetList('i)^NotifyGUI_\d+_[a-z]+_\d+_\Q' str '\E$ ahk_class AutoHotkeyGUI')                                                              
+            try WinClose('ahk_id ' id)  
+        
         this.Set_DHWindows_TMMode(mDhwTmm['dhwPrev'], mDhwTmm['tmmPrev'])                             
     }
 
@@ -678,7 +727,7 @@ Class Notify {
     static WinGetList_WinClose(winTtile, dhWindows, tmMode)
     {
         mDhwTmm := this.Set_DHWindows_TMMode(dhWindows, tmMode)
-        SetWinDelay(1) 
+        SetWinDelay(25)
         
         for id in WinGetList(winTtile)
             try WinClose('ahk_id ' id)
@@ -799,7 +848,25 @@ Class Notify {
         g.pic.GetPos(,, &ctrlWidth)
         g.Destroy()
         return ctrlWidth
-    }      
+    }   
+    
+    ;============================================================================================
+
+    static SortArrayGUIPosY(arr, sortReverse := false)
+    {
+        for _, value in arr
+            listValueY .= value['gY'] ','
+
+        listSortValueY := Sort(RTrim(listValueY, ','), (sortReverse ? 'RN' : 'N') ' D,')
+        sortArray := Array()
+
+        for index, value in StrSplit(listSortValueY, ',')
+            for _, v in arr
+                if v['gY'] = value
+                    sortArray.Push(v)
+            
+        return sortArray    
+    }    
   
     ;============================================================================================
     ; FrameShadow by Klark92.  https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29117&hilit=FrameShadow
@@ -816,7 +883,6 @@ Class Notify {
             DllCall("dwmapi.dll\DwmSetWindowAttribute", "ptr", hwnd, "Int", 2, "Int*", 2, "Int", 4)
             DllCall("dwmapi.dll\DwmExtendFrameIntoClientArea", "ptr", hwnd, "ptr", margins)
         }
-    }
-    
+    }   
     ;============================================================================================              
 }
