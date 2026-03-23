@@ -504,7 +504,7 @@ Class Notify {
         g.gIndex := ++gIndex
         m['hwnd'] := g.handle := g.hwnd
 
-        for value in ['pos', 'mon', 'hideHex', 'hideDur', 'tag', 'dga']
+        for value in ['pos', 'mon', 'hideHex', 'hideDur', 'tag', 'dga', 'style']
             g.%value% := m[value]
 
         ;==============================================
@@ -801,8 +801,24 @@ Class Notify {
     {
         SetTimer(g.boundFuncTimer, 0)
 
-        if g.hideHex && (fromMethod != 'close' || g.dga)
+        if (g.style = "round" && (fromMethod != 'close' || g.dga)) {
+            total := g.hideDur
+            steps := Max(10, Min(30, g.hideDur / 10))
+            delay := g.hideDur / steps
+
+            WinSetTransparent(255, g)
+
+            Loop steps {
+                progress := A_Index / steps
+                alpha := Round(255 * (1 - progress))  ; linear fade
+
+                try WinSetTransparent(alpha, g)
+                Sleep(delay)
+            }
+
+        } else if g.hideHex && (fromMethod != 'close' || g.dga) {
             try DllCall('AnimateWindow', 'Ptr', g.hwnd, 'Int', g.hideDur, 'Int', Format('{:#X}', g.hideHex + 0x10000))
+        }
 
         g.Destroy()
 
